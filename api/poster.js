@@ -5,12 +5,21 @@ const { computeData } = require('../lib/data');
 const { buildHtml } = require('../lib/template');
 const { chromium: pw } = require('playwright-core');
 
-// @sparticuz/chromium v153 起改为 Chromium 类 + 静态 API（旧版为普通对象，兼容两种）
+// @sparticuz/chromium v153 是纯 ESM 包（"type": "module"）：CJS 里 require() 它
+// 需要 Node 22.12+ 的 require(esm)，旧版 Node 会抛 ERR_REQUIRE_ESM。
+// 改走动态 import()，任何支持 ESM 的 Node 都能加载；结果缓存到模块级，
+// 热调用不再重复加载。
 let Chromium = null;
-try {
-  const mod = require('@sparticuz/chromium');
-  Chromium = mod.default || mod;
-} catch (e) { /* 本地无则走 CHROME_PATH */ }
+let chromiumTried = false;
+async function loadChromium() {
+  if (chromiumTried) return Chromium;
+  chromiumTried = true;
+  try {
+    const mod = await import('@sparticuz/chromium');
+    Chromium = mod.default || mod;
+  } catch (e) { /* 未安装则走 CHROME_PATH / 默认路径 */ }
+  return Chromium;
+}
 
 function assetUri(absPath) {
   const buf = fs.readFileSync(absPath);
@@ -32,12 +41,13 @@ module.exports = async (req, res) => {
     });
 
     const launchOpts = { headless: true };
+    const chromium = await loadChromium();
     if (process.env.CHROME_PATH) {
       launchOpts.executablePath = process.env.CHROME_PATH;
       launchOpts.args = ['--no-sandbox'];
-    } else if (Chromium) {
-      launchOpts.args = Chromium.args;
-      launchOpts.executablePath = await Chromium.executablePath();
+    } else if (chromium) {
+      launchOpts.args = chromium.args;
+      launchOpts.executablePath = await chromium.executablePath();
     } else {
       launchOpts.args = ['--no-sandbox'];
     }
