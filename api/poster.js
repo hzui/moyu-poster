@@ -58,11 +58,23 @@ module.exports = async (req, res) => {
       deviceScaleFactor: 2,
     });
     await page.setContent(html, { waitUntil: 'domcontentloaded', timeout: 30000 });
-    // 字体就绪即渲染，最多等 8 秒：避免某个字体请求挂起拖慢整张图
-    await Promise.race([
-      page.evaluate(() => document.fonts.ready).catch(() => {}),
-      page.waitForTimeout(8000),
-    ]);
+    // 字体等待：document.fonts.ready 在字体 CSS 尚未到达时会立即 resolve（空集），
+    // 所以先等字体注册，再强制加载关键字重，最多等 12 秒。
+    await page.evaluate(async () => {
+      const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+      const t0 = Date.now();
+      while (document.fonts.size === 0 && Date.now() - t0 < 8000) await sleep(100);
+      await Promise.race([
+        (async () => {
+          try { await document.fonts.load('900 48px "Moyu Sans"', '摸'); } catch (e) {}
+          try { await document.fonts.load('700 32px "Moyu Sans"', '鱼'); } catch (e) {}
+          try { await document.fonts.load('400 20px "Moyu Sans"', '办'); } catch (e) {}
+          try { await document.fonts.load('400 20px "Moyu Emoji"', '🌻'); } catch (e) {}
+          await document.fonts.ready;
+        })(),
+        sleep(12000),
+      ]);
+    }).catch(() => {});
     const png = await page.screenshot({ fullPage: true });
     await browser.close();
 

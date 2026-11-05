@@ -28,6 +28,7 @@
 | `style.css` | 全部样式 |
 | `config.yaml` | 配置：品牌名、发薪日、二维码内容 |
 | `assets/` | `anime_girl.png` 动漫少女（顶栏头像）、`qr.png` 二维码、`mascot.png` 蓝色小怪兽（备用）、`fish.png` 大肥鱼（备用） |
+| `assets/fonts/` | 内嵌子集字体：Noto Sans SC（224 汉字，字重 100–900）＋ Noto Color Emoji（17 个 emoji），data URI 内嵌、不依赖网络 |
 | `vercel.json` | 函数配置（1024MB 内存） |
 
 ## 配置（config.yaml）
