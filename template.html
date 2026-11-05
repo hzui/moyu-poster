@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page">
+
+<header>
+<img class="logo-girl" src="assets/anime_girl.png">
+<div class="head-center">
+<div class="brand-line">【%%brand%%】提醒您 <span>☀️</span></div>
+<div class="date-pill">%%date_str%%&nbsp;&nbsp;第%%week_num%%周&nbsp;&nbsp;%%weekday%%</div>
+<div class="lunar">农历%%lunar_str%%</div>
+<div class="greeting">%%greeting%%</div>
+<div class="tip">%%rest_tip%%</div>
+<div class="sub">%%rest_sub%% 🙂</div>
+</div>
+</header>
+
+<section>
+<div class="bar bar-orange"><span>📅</span>节日倒计时</div>
+<div class="fest-grid">%%festival_cards%%</div>
+</section>
+
+<div class="cols">
+<section class="card progress-card">
+<div class="bar bar-green"><span>🗓️</span>工作日 / 进度</div>
+<div class="prog-row">%%progress_cols%%</div>
+</section>
+<section class="card salary-card">
+<div class="bar bar-orange"><span>💰</span>发工资倒计时</div>
+<div class="salary-grid">%%salary_items%%</div>
+</section>
+</div>
+
+<footer>
+<img class="qr" src="assets/qr.png">
+<div class="foot-text">%%qr_caption%%<b>%%brand%%</b><br><span>公众号：%%brand%%小助手</span></div>
+<div class="flowers">🌻🌻🌻🌻🌻</div>
+</footer>
+
+</div>
+</body>
+</html>

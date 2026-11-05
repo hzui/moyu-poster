@@ -1,0 +1,13 @@
+{
+  "functions": {
+    "api/poster.js": {
+      "memory": 1024,
+      "includeFiles": [
+        "assets/**",
+        "config.yaml",
+        "style.css",
+        "template.html"
+      ]
+    }
+  }
+}
