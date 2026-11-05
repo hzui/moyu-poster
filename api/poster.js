@@ -8,22 +8,23 @@ const { chromium: pw } = require('playwright-core');
 let spChromium = null;
 try { spChromium = require('@sparticuz/chromium'); } catch (e) { /* 本地无则走 CHROME_PATH */ }
 
-function assetUri(absPath) {
-  const buf = fs.readFileSync(absPath);
+function assetUri(root, name) {
+  const buf = fs.readFileSync(path.join(root, 'assets', name));
   return 'data:image/png;base64,' + buf.toString('base64');
 }
 
 module.exports = async (req, res) => {
   let browser = null;
   try {
+    const root = path.join(__dirname, '..');
     const data = computeData(req.query && req.query.date);
-    const css = fs.readFileSync(path.join(__dirname, '..', 'style.css'), 'utf8');
+    const css = fs.readFileSync(path.join(root, 'style.css'), 'utf8');
     const html = buildHtml(data, {
       css,
       images: {
-        'mascot.png': assetUri(path.join(__dirname, '..', 'assets', 'mascot.png')),
-        'anime_girl.png': assetUri(path.join(__dirname, '..', 'assets', 'anime_girl.png')),
-        'qr.png': assetUri(path.join(__dirname, '..', 'assets', 'qr.png')),
+        'mascot.png': assetUri(root, 'mascot.png'),
+        'anime_girl.png': assetUri(root, 'anime_girl.png'),
+        'qr.png': assetUri(root, 'qr.png'),
       },
     });
 
